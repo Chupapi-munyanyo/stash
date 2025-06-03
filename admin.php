@@ -1,8 +1,6 @@
 <?php
-// admin.php
 session_start();
 
-// Sample data - in real application this would come from database
 $products = [
     ['id' => 1, 'name' => 'Milti', 'category' => 'Pulveris', 'price' => 12, 'company' => 'Raicha', 'quantity' => 12],
     ['id' => 2, 'name' => 'Ūdens', 'category' => 'Šķidrums', 'price' => 12, 'company' => 'Raicha', 'quantity' => 1111],
@@ -15,27 +13,20 @@ $users = [
     ['id' => 3, 'name' => 'Pēteris Ozols', 'role' => 'Administrātors', 'email' => 'peteris@example.com']
 ];
 
-// Handle form submissions
 if ($_POST) {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'delete_product':
-                // Handle product deletion
                 break;
             case 'edit_product':
-                // Handle product editing
                 break;
             case 'add_product':
-                // Handle product addition
                 break;
             case 'delete_user':
-                // Handle user deletion
                 break;
             case 'edit_user':
-                // Handle user editing
                 break;
             case 'add_user':
-                // Handle user addition
                 break;
         }
     }
@@ -52,7 +43,6 @@ if ($_POST) {
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
         <nav class="sidebar">
             <div class="logo">
                 <span class="logo-icon">📦</span>
@@ -92,9 +82,7 @@ if ($_POST) {
             </ul>
         </nav>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Dashboard Section -->
             <section id="dashboard" class="content-section active">
                 <header class="content-header">
                     <h1>Administrātora panelis</h1>
@@ -115,7 +103,6 @@ if ($_POST) {
                 </div>
             </section>
 
-            <!-- Products Management Section -->
             <section id="products" class="content-section">
                 <header class="content-header">
                     <h1>Produktu pārvaldība</h1>
@@ -153,7 +140,6 @@ if ($_POST) {
                 </div>
             </section>
 
-            <!-- Users Management Section -->
             <section id="users" class="content-section">
                 <header class="content-header">
                     <h1>Lietotāju pārvaldība</h1>
@@ -187,7 +173,6 @@ if ($_POST) {
                 </div>
             </section>
 
-            <!-- Reports Section -->
             <section id="reports" class="content-section">
                 <header class="content-header">
                     <h1>Atskaites un pārskati</h1>
@@ -214,7 +199,6 @@ if ($_POST) {
         </main>
     </div>
 
-    <!-- Modal for forms -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -224,18 +208,14 @@ if ($_POST) {
 
     <script>
         function showSection(sectionId) {
-            // Hide all sections
             const sections = document.querySelectorAll('.content-section');
             sections.forEach(section => section.classList.remove('active'));
             
-            // Remove active class from nav items
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => item.classList.remove('active'));
             
-            // Show selected section
             document.getElementById(sectionId).classList.add('active');
             
-            // Add active class to clicked nav item
             event.target.closest('.nav-item').classList.add('active');
         }
 
@@ -312,7 +292,6 @@ if ($_POST) {
 
         function deleteProduct(id) {
             if (confirm('Vai tiešām vēlaties dzēst šo produktu?')) {
-                // Submit delete form
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
@@ -330,7 +309,6 @@ if ($_POST) {
 
         function deleteUser(id) {
             if (confirm('Vai tiešām vēlaties dzēst šo lietotāju?')) {
-                // Submit delete form
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
@@ -364,7 +342,6 @@ if ($_POST) {
             }
         }
 
-        // Close modal when clicking outside of it
         window.onclick = function(event) {
             const modal = document.getElementById('modal');
             if (event.target == modal) {
