@@ -1,0 +1,177 @@
+Method received: GET
+GET parameters:\nArray
+(
+    [id] => 2
+)
+
+Server variables:\nArray
+(
+    [MIBDIRS] => C:/xampp/php/extras/mibs
+    [MYSQL_HOME] => \xampp\mysql\bin
+    [OPENSSL_CONF] => C:/xampp/apache/bin/openssl.cnf
+    [PHP_PEAR_SYSCONF_DIR] => \xampp\php
+    [PHPRC] => \xampp\php
+    [TMP] => \xampp\tmp
+    [HTTP_HOST] => localhost
+    [HTTP_CONNECTION] => keep-alive
+    [HTTP_SEC_CH_UA_PLATFORM] => "Windows"
+    [HTTP_USER_AGENT] => Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+    [HTTP_SEC_CH_UA] => "Brave";v="137", "Chromium";v="137", "Not/A)Brand";v="24"
+    [HTTP_SEC_CH_UA_MOBILE] => ?0
+    [HTTP_ACCEPT] => */*
+    [HTTP_SEC_GPC] => 1
+    [HTTP_ACCEPT_LANGUAGE] => en-US,en;q=0.5
+    [HTTP_SEC_FETCH_SITE] => same-origin
+    [HTTP_SEC_FETCH_MODE] => cors
+    [HTTP_SEC_FETCH_DEST] => empty
+    [HTTP_REFERER] => http://localhost/Stash/RandomNoliktava.html?username=admin&password=admin123
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br, zstd
+    [PATH] => C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\nodejs\;C:\Program Files\php-8.3.3;C:\ProgramData\ComposerSetup\bin;C:\Program Files\Git\cmd;c:\Users\edgar\AppData\Local\Programs\cursor\resources\app\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\edgar\AppData\Local\Programs\Python\Python39\Scripts\;C:\Users\edgar\AppData\Local\Programs\Python\Python39\;C:\Users\edgar\AppData\Local\Microsoft\WindowsApps;C:\Users\edgar\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\edgar\.dotnet\tools;C:\Users\edgar\AppData\Roaming\npm;C:\Users\edgar\AppData\Roaming\Composer\vendor\bin;C:\Users\edgar\AppData\Local\GitHubDesktop\bin;C:\Users\edgar\AppData\Local\Programs\cursor\resources\app\bin
+    [SystemRoot] => C:\Windows
+    [COMSPEC] => C:\Windows\system32\cmd.exe
+    [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+    [WINDIR] => C:\Windows
+    [SERVER_SIGNATURE] => <address>Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at localhost Port 80</address>
+
+    [SERVER_SOFTWARE] => Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12
+    [SERVER_NAME] => localhost
+    [SERVER_ADDR] => ::1
+    [SERVER_PORT] => 80
+    [REMOTE_ADDR] => ::1
+    [DOCUMENT_ROOT] => C:/xampp/htdocs
+    [REQUEST_SCHEME] => http
+    [CONTEXT_PREFIX] => 
+    [CONTEXT_DOCUMENT_ROOT] => C:/xampp/htdocs
+    [SERVER_ADMIN] => postmaster@localhost
+    [SCRIPT_FILENAME] => C:/xampp/htdocs/Stash/api/products.php
+    [REMOTE_PORT] => 63172
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [REQUEST_METHOD] => GET
+    [QUERY_STRING] => id=2
+    [REQUEST_URI] => /Stash/api/products.php?id=2
+    [SCRIPT_NAME] => /Stash/api/products.php
+    [PHP_SELF] => /Stash/api/products.php
+    [REQUEST_TIME_FLOAT] => 1749466434.0062
+    [REQUEST_TIME] => 1749466434
+)
+
+
+Method received: GET
+GET parameters:\nArray
+(
+    [id] => 1
+)
+
+Server variables:\nArray
+(
+    [MIBDIRS] => C:/xampp/php/extras/mibs
+    [MYSQL_HOME] => \xampp\mysql\bin
+    [OPENSSL_CONF] => C:/xampp/apache/bin/openssl.cnf
+    [PHP_PEAR_SYSCONF_DIR] => \xampp\php
+    [PHPRC] => \xampp\php
+    [TMP] => \xampp\tmp
+    [HTTP_HOST] => localhost
+    [HTTP_CONNECTION] => keep-alive
+    [HTTP_SEC_CH_UA_PLATFORM] => "Windows"
+    [HTTP_USER_AGENT] => Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+    [HTTP_SEC_CH_UA] => "Brave";v="137", "Chromium";v="137", "Not/A)Brand";v="24"
+    [HTTP_SEC_CH_UA_MOBILE] => ?0
+    [HTTP_ACCEPT] => */*
+    [HTTP_SEC_GPC] => 1
+    [HTTP_ACCEPT_LANGUAGE] => en-US,en;q=0.5
+    [HTTP_SEC_FETCH_SITE] => same-origin
+    [HTTP_SEC_FETCH_MODE] => cors
+    [HTTP_SEC_FETCH_DEST] => empty
+    [HTTP_REFERER] => http://localhost/Stash/RandomNoliktava.html?username=admin&password=admin123
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br, zstd
+    [PATH] => C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\nodejs\;C:\Program Files\php-8.3.3;C:\ProgramData\ComposerSetup\bin;C:\Program Files\Git\cmd;c:\Users\edgar\AppData\Local\Programs\cursor\resources\app\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\edgar\AppData\Local\Programs\Python\Python39\Scripts\;C:\Users\edgar\AppData\Local\Programs\Python\Python39\;C:\Users\edgar\AppData\Local\Microsoft\WindowsApps;C:\Users\edgar\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\edgar\.dotnet\tools;C:\Users\edgar\AppData\Roaming\npm;C:\Users\edgar\AppData\Roaming\Composer\vendor\bin;C:\Users\edgar\AppData\Local\GitHubDesktop\bin;C:\Users\edgar\AppData\Local\Programs\cursor\resources\app\bin
+    [SystemRoot] => C:\Windows
+    [COMSPEC] => C:\Windows\system32\cmd.exe
+    [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+    [WINDIR] => C:\Windows
+    [SERVER_SIGNATURE] => <address>Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at localhost Port 80</address>
+
+    [SERVER_SOFTWARE] => Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12
+    [SERVER_NAME] => localhost
+    [SERVER_ADDR] => ::1
+    [SERVER_PORT] => 80
+    [REMOTE_ADDR] => ::1
+    [DOCUMENT_ROOT] => C:/xampp/htdocs
+    [REQUEST_SCHEME] => http
+    [CONTEXT_PREFIX] => 
+    [CONTEXT_DOCUMENT_ROOT] => C:/xampp/htdocs
+    [SERVER_ADMIN] => postmaster@localhost
+    [SCRIPT_FILENAME] => C:/xampp/htdocs/Stash/api/products.php
+    [REMOTE_PORT] => 64174
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [REQUEST_METHOD] => GET
+    [QUERY_STRING] => id=1
+    [REQUEST_URI] => /Stash/api/products.php?id=1
+    [SCRIPT_NAME] => /Stash/api/products.php
+    [PHP_SELF] => /Stash/api/products.php
+    [REQUEST_TIME_FLOAT] => 1749467588.2186
+    [REQUEST_TIME] => 1749467588
+)
+
+
+Method received: GET
+GET parameters:\nArray
+(
+    [id] => 6
+)
+
+Server variables:\nArray
+(
+    [MIBDIRS] => C:/xampp/php/extras/mibs
+    [MYSQL_HOME] => \xampp\mysql\bin
+    [OPENSSL_CONF] => C:/xampp/apache/bin/openssl.cnf
+    [PHP_PEAR_SYSCONF_DIR] => \xampp\php
+    [PHPRC] => \xampp\php
+    [TMP] => \xampp\tmp
+    [HTTP_HOST] => localhost
+    [HTTP_CONNECTION] => keep-alive
+    [HTTP_SEC_CH_UA_PLATFORM] => "Windows"
+    [HTTP_USER_AGENT] => Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+    [HTTP_SEC_CH_UA] => "Brave";v="137", "Chromium";v="137", "Not/A)Brand";v="24"
+    [HTTP_SEC_CH_UA_MOBILE] => ?0
+    [HTTP_ACCEPT] => */*
+    [HTTP_SEC_GPC] => 1
+    [HTTP_ACCEPT_LANGUAGE] => en-US,en;q=0.5
+    [HTTP_SEC_FETCH_SITE] => same-origin
+    [HTTP_SEC_FETCH_MODE] => cors
+    [HTTP_SEC_FETCH_DEST] => empty
+    [HTTP_REFERER] => http://localhost/Stash/RandomNoliktava.html?username=admin&password=admin123
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br, zstd
+    [PATH] => C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\nodejs\;C:\Program Files\php-8.3.3;C:\ProgramData\ComposerSetup\bin;C:\Program Files\Git\cmd;c:\Users\edgar\AppData\Local\Programs\cursor\resources\app\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\edgar\AppData\Local\Programs\Python\Python39\Scripts\;C:\Users\edgar\AppData\Local\Programs\Python\Python39\;C:\Users\edgar\AppData\Local\Microsoft\WindowsApps;C:\Users\edgar\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\edgar\.dotnet\tools;C:\Users\edgar\AppData\Roaming\npm;C:\Users\edgar\AppData\Roaming\Composer\vendor\bin;C:\Users\edgar\AppData\Local\GitHubDesktop\bin;C:\Users\edgar\AppData\Local\Programs\cursor\resources\app\bin
+    [SystemRoot] => C:\Windows
+    [COMSPEC] => C:\Windows\system32\cmd.exe
+    [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+    [WINDIR] => C:\Windows
+    [SERVER_SIGNATURE] => <address>Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at localhost Port 80</address>
+
+    [SERVER_SOFTWARE] => Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12
+    [SERVER_NAME] => localhost
+    [SERVER_ADDR] => ::1
+    [SERVER_PORT] => 80
+    [REMOTE_ADDR] => ::1
+    [DOCUMENT_ROOT] => C:/xampp/htdocs
+    [REQUEST_SCHEME] => http
+    [CONTEXT_PREFIX] => 
+    [CONTEXT_DOCUMENT_ROOT] => C:/xampp/htdocs
+    [SERVER_ADMIN] => postmaster@localhost
+    [SCRIPT_FILENAME] => C:/xampp/htdocs/Stash/api/products.php
+    [REMOTE_PORT] => 64335
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [REQUEST_METHOD] => GET
+    [QUERY_STRING] => id=6
+    [REQUEST_URI] => /Stash/api/products.php?id=6
+    [SCRIPT_NAME] => /Stash/api/products.php
+    [PHP_SELF] => /Stash/api/products.php
+    [REQUEST_TIME_FLOAT] => 1749467846.4488
+    [REQUEST_TIME] => 1749467846
+)
+
+

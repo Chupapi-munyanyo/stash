@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STASH - Noliktavas Pārvaldības Sistēma</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+
+<body>
+    <!-- Mobile Menu Toggle Button -->
+    <button class="mobile-menu-toggle" style="display: none;" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Login Form -->
+    <div id="login-container" class="login-container">
+        <form class="login-form" id="login-form">
+            <div class="login-header">
+                <h1>STASH</h1>
+                <p>Noliktavas Pārvaldības Sistēma</p>
+            </div>
+            <div class="form-group">
+                <label for="username">Lietotājvārds:</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Parole:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn login-btn">Pieslēgties</button>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="#" onclick="showRegisterForm()" style="color: #666; text-decoration: none;">Nav konta? Reģistrēties</a>
+            </div>
+            <div class="demo-users">
+                <h4>Demo lietotāji:</h4>
+                <p><strong>admin</strong> / admin123 (Administrators)</p>
+                <p><strong>worker</strong> / worker123 (Noliktavas darbinieks)</p>
+                <p><strong>organizer</strong> / org123 (Plauktu kārtotājs)</p>
+            </div>
+        </form>
+    </div>
+
+    <!-- Registration Form -->
+    <div id="register-container" class="login-container" style="display: none;">
+        <form class="login-form" id="register-form">
+            <div class="login-header">
+                <h1>STASH</h1>
+                <p>Reģistrācija</p>
+            </div>
+            <div class="form-group">
+                <label for="reg-username">Lietotājvārds:</label>
+                <input type="text" class="form-control" id="reg-username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Parole:</label>
+                <input type="password" class="form-control" id="reg-password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-fullname">Pilns vārds:</label>
+                <input type="text" class="form-control" id="reg-fullname" name="fullname" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn login-btn">Reģistrēties</button>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="#" onclick="showLoginForm()" style="color: #666; text-decoration: none;">Jau ir konts? Pieslēgties</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app-container" class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>STASH</h1>
+            </div>
+            <div class="user-info">
+                <div class="user-name" id="current-user">Lietotājs</div>
+                <div class="user-role" id="current-role">Loma</div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="home">
+                        <span class="nav-icon">🏠</span>
+                        Sākums
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="products">
+                        <span class="nav-icon">📦</span>
+                        Produkti
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="orders" data-roles="admin,worker">
+                        <span class="nav-icon">🚚</span>
+                        Pasūtījumi
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="reports" data-roles="admin,organizer">
+                        <span class="nav-icon">📊</span>
+                        Atskaites
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="users" data-roles="admin">
+                        <span class="nav-icon">👥</span>
+                        Lietotāji
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Iziet
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="welcome-section">
+                    <h2 id="welcome-title">Laipni lūdzam STASH sistēmā!</h2>
+                    <p>Noliktavas pārvaldības sistēma visām jūsu vajadzībām</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="total-products">3</h3>
+                        <p>Kopā produktu</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="total-orders">12</h3>
+                        <p>Aktīvi pasūtījumi</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="total-users">3</h3>
+                        <p>Lietotāji sistēmā</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>98%</h3>
+                        <p>Sistēmas darbspēja</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Page -->
+            <div id="products-page" class="page" style="display: none;">
+                <div class="header">
+                    <h2>Produkti</h2>
+                </div>
+
+                <div class="add-buttons">
+                    <button class="btn btn-success" onclick="openModal('add-product-modal')" id="add-product-btn">
+                        ➕ Pievienot produktu
+                    </button>
+                    <button class="btn btn-primary" onclick="generateProductReport()">
+                        📊 Ģenerēt atskaiti
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Produkts</th>
+                                <th>Kategorija</th>
+                                <th>Cena (€)</th>
+                                <th>Firmas ID</th>
+                                <th>Daudzums</th>
+                                <th>Darbības</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Milti</td>
+                                <td>Pulveris</td>
+                                <td>12.00</td>
+                                <td>Raicha</td>
+                                <td>12</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(this)">Dzēst</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="editProduct(this)">Rediģēt</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Ūdens</td>
+                                <td>Šķidrums</td>
+                                <td>1.50</td>
+                                <td>Raicha</td>
+                                <td>1111</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(this)">Dzēst</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="editProduct(this)">Rediģēt</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Tabletes</td>
+                                <td>Tabletes</td>
+                                <td>25.99</td>
+                                <td>Raicha</td>
+                                <td>12</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(this)">Dzēst</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="editProduct(this)">Rediģēt</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add Product Modal -->
+            <div id="add-product-modal" class="modal">
+                <div class="modal-content-custom">
+                    <span class="btn-close-custom" onclick="closeModal('add-product-modal')">&times;</span>
+                    <div class="modal-header-custom">
+                        <h5 class="modal-title-custom">Pievienot produktu</h5>
+                    </div>
+                    <div class="modal-body-custom">
+                        <form id="add-product-form" onsubmit="addProduct(event)">
+                            <div class="form-group">
+                                <label for="product-name">Nosaukums:</label>
+                                <input type="text" class="form-control" id="product-name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-category">Kategorija:</label>
+                                <input type="text" class="form-control" id="product-category" name="category">
+                            </div>
+                            <div class="form-group">
+                                <label for="product-price">Cena:</label>
+                                <input type="number" class="form-control" id="product-price" name="price" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-quantity">Daudzums:</label>
+                                <input type="number" class="form-control" id="product-quantity" name="quantity" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-company">Firmas ID:</label>
+                                <input type="text" class="form-control" id="product-company" name="company_id">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('add-product-modal')">Atcelt</button>
+                                <button type="submit" class="btn btn-success">Pievienot</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Product Modal -->
+            <div id="edit-product-modal" class="modal">
+                <div class="modal-content-custom">
+                    <span class="btn-close-custom" onclick="closeModal('edit-product-modal')">&times;</span>
+                    <div class="modal-header-custom">
+                        <h5 class="modal-title-custom">Rediģēt produktu</h5>
+                    </div>
+                    <div class="modal-body-custom">
+                        <form id="edit-product-form" onsubmit="updateProduct(event)">
+                            <input type="hidden" id="edit-product-id" name="id">
+                            <div class="form-group">
+                                <label for="edit-product-name">Nosaukums:</label>
+                                <input type="text" class="form-control" id="edit-product-name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-product-category">Kategorija:</label>
+                                <input type="text" class="form-control" id="edit-product-category" name="category">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-product-price">Cena:</label>
+                                <input type="number" class="form-control" id="edit-product-price" name="price" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-product-quantity">Daudzums:</label>
+                                <input type="number" class="form-control" id="edit-product-quantity" name="quantity" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-product-company">Firmas ID:</label>
+                                <input type="text" class="form-control" id="edit-product-company" name="company_id">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('edit-product-modal')">Atcelt</button>
+                                <button type="submit" class="btn btn-success">Saglabāt</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Page -->
+            <div id="orders-page" class="page" style="display: none;">
+                <div class="header">
+                    <h2>Pasūtījumi</h2>
+                </div>
+
+                <div class="add-buttons">
+                    <button class="btn btn-success" onclick="openModal('add-order-modal')">
+                        ➕ Jauns pasūtījums
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Pasūtījuma Nr.</th>
+                                <th>Statuss</th>
+                                <th>Izveidoja</th>
+                                <th>Produkti</th>
+                                <th>Datums</th>
+                                <th>Darbības</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ORD001</td>
+                                <td><span class="badge bg-warning">Gaida</span></td>
+                                <td>Jānis Bērziņš</td>
+                                <td>Milti, Ūdens</td>
+                                <td>2023-10-26</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-info btn-sm">Skatīt</button>
+                                        <button class="btn btn-success btn-sm">Pabeigt</button>
+                                        <button class="btn btn-danger btn-sm">Atcelt</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>ORD002</td>
+                                <td><span class="badge bg-success">Pabeigts</span></td>
+                                <td>Anna Liepa</td>
+                                <td>Milti, Tabletes</td>
+                                <td>2023-10-25</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-info btn-sm">Skatīt</button>
+                                        <button class="btn btn-success btn-sm" disabled>Pabeigt</button>
+                                        <button class="btn btn-danger btn-sm" disabled>Atcelt</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add Order Modal -->
+            <div id="add-order-modal" class="modal">
+                <div class="modal-content-custom">
+                    <span class="btn-close-custom" onclick="closeModal('add-order-modal')">&times;</span>
+                    <div class="modal-header-custom">
+                        <h5 class="modal-title-custom">Jauns pasūtījums</h5>
+                    </div>
+                    <div class="modal-body-custom">
+                        <form id="add-order-form" onsubmit="addOrder(event)">
+                            <div id="order-items-container">
+                                <!-- Order items will be added here by JavaScript -->
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addOrderItem()">➕ Pievienot preci</button>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('add-order-modal')">Atcelt</button>
+                                <button type="submit" class="btn btn-success">Izveidot pasūtījumu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports-page" class="page" style="display: none;">
+                <div class="header">
+                    <h2>Atskaites</h2>
+                </div>
+                <div class="report-controls">
+                    <div class="form-group">
+                        <label for="report-type">Atskaites tips:</label>
+                        <select id="report-type" class="form-select">
+                            <option value="products">Produktu pārdošanas apjomi</option>
+                            <option value="orders">Pasūtījumu pārskats</option>
+                            <option value="inventory">Noliktavas pārskats</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="report-date-from">No datuma:</label>
+                        <input type="date" id="report-date-from" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="report-date-to">Līdz datumam:</label>
+                        <input type="date" id="report-date-to" class="form-control">
+                    </div>
+                    <button class="btn btn-primary" onclick="generateReport()">Ģenerēt atskaiti</button>
+                </div>
+                <div class="report-results" id="report-results" style="display: none;">
+                    <h3>Atskaites rezultāti:</h3>
+                    <div id="report-content" class="table-responsive">
+                        <!-- Report content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div id="users-page" class="page" style="display: none;">
+                <div class="header">
+                    <h2>Lietotāji</h2>
+                </div>
+                <div class="add-buttons">
+                    <button class="btn btn-success" onclick="openModal('addUserModal')">
+                        ➕ Pievienot lietotāju
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="table" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Lietotājvārds</th>
+                                <th>Pilns vārds</th>
+                                <th>Loma</th>
+                                <th>Pēdējā pieslēgšanās</th>
+                                <th>Statuss</th>
+                                <th>Darbības</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- User data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add User Modal -->
+            <div id="addUserModal" class="modal">
+                <div class="modal-content-custom">
+                    <span class="btn-close-custom" onclick="closeModal('addUserModal')">&times;</span>
+                    <div class="modal-header-custom">
+                        <h5 class="modal-title-custom">Pievienot lietotāju</h5>
+                    </div>
+                    <div class="modal-body-custom">
+                        <form id="addUserForm" onsubmit="addUser(event)">
+                            <div class="form-group">
+                                <label for="add-user-username">Lietotājvārds</label>
+                                <input type="text" class="form-control" id="add-user-username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="add-user-password">Parole</label>
+                                <input type="password" class="form-control" id="add-user-password" name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="add-user-fullName">Pilns vārds</label>
+                                <input type="text" class="form-control" id="add-user-fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="add-user-role">Loma</label>
+                                <select class="form-select" id="add-user-role" name="role" required>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="add-user-status">Statuss</label>
+                                <select class="form-select" id="add-user-status" name="status" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('addUserModal')">Close</button>
+                                <button type="submit" class="btn btn-primary">Pievienot</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit User Modal -->
+            <div id="editUserModal" class="modal">
+                <div class="modal-content-custom">
+                    <span class="btn-close-custom" onclick="closeModal('editUserModal')">&times;</span>
+                    <div class="modal-header-custom">
+                        <h5 class="modal-title-custom" id="editUserModalLabel">Edit User</h5>
+                    </div>
+                    <div class="modal-body-custom">
+                        <form id="editUserForm" onsubmit="updateUser(event)">
+                            <input type="hidden" name="userId">
+                            <div class="form-group">
+                                <label for="edit-user-username-input">Lietotājvārds</label>
+                                <input type="text" class="form-control" id="edit-user-username-input" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-user-fullName">Pilns vārds</label>
+                                <input type="text" class="form-control" id="edit-user-fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-user-role">Loma</label>
+                                <select class="form-select" id="edit-user-role" name="role" required>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="worker">Worker</option>
+                                    <option value="organizer">Organizer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-user-status">Statuss</label>
+                                <select class="form-select" id="edit-user-status" name="status" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('editUserModal')">Close</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
