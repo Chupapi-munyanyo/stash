@@ -25,11 +25,13 @@
             </div>
             <div class="form-group">
                 <label for="username">Lietotājvārds:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <input type="text" class="form-control" id="username" name="username" data-validation="username">
+                <div class="validation-error" id="username-error"></div>
             </div>
             <div class="form-group">
                 <label for="password">Parole:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <input type="password" class="form-control" id="password" name="password" data-validation="password">
+                <div class="validation-error" id="password-error"></div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn login-btn">Pieslēgties</button>
@@ -42,6 +44,7 @@
                 <p><strong>admin</strong> / admin123 (Administrators)</p>
                 <p><strong>worker</strong> / worker123 (Noliktavas darbinieks)</p>
                 <p><strong>organizer</strong> / org123 (Plauktu kārtotājs)</p>
+                <p><strong>user</strong> / user123 (Parastais lietotājs)</p>
             </div>
         </form>
     </div>
@@ -55,15 +58,18 @@
             </div>
             <div class="form-group">
                 <label for="reg-username">Lietotājvārds:</label>
-                <input type="text" class="form-control" id="reg-username" name="username" required>
+                <input type="text" class="form-control" id="reg-username" name="username" data-validation="username">
+                <div class="validation-error" id="reg-username-error"></div>
             </div>
             <div class="form-group">
                 <label for="reg-password">Parole:</label>
-                <input type="password" class="form-control" id="reg-password" name="password" required>
+                <input type="password" class="form-control" id="reg-password" name="password" data-validation="password">
+                <div class="validation-error" id="reg-password-error"></div>
             </div>
             <div class="form-group">
                 <label for="reg-fullname">Pilns vārds:</label>
-                <input type="text" class="form-control" id="reg-fullname" name="fullname" required>
+                <input type="text" class="form-control" id="reg-fullname" name="fullname" data-validation="fullname">
+                <div class="validation-error" id="reg-fullname-error"></div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn login-btn">Reģistrēties</button>
@@ -99,7 +105,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link" data-page="orders" data-roles="admin,worker">
+                    <a href="#" class="nav-link" data-page="orders" data-roles="admin,worker,user">
                         <span class="nav-icon">🚚</span>
                         Pasūtījumi
                     </a>
@@ -237,23 +243,28 @@
                         <form id="add-product-form" onsubmit="addProduct(event)">
                             <div class="form-group">
                                 <label for="product-name">Nosaukums:</label>
-                                <input type="text" class="form-control" id="product-name" name="name" required>
+                                <input type="text" class="form-control" id="product-name" name="name" data-validation="product-name">
+                                <div class="validation-error" id="product-name-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="product-category">Kategorija:</label>
-                                <input type="text" class="form-control" id="product-category" name="category">
+                                <input type="text" class="form-control" id="product-category" name="category" data-validation="category">
+                                <div class="validation-error" id="product-category-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="product-price">Cena:</label>
-                                <input type="number" class="form-control" id="product-price" name="price" step="0.01" required>
+                                <input type="number" class="form-control" id="product-price" name="price" step="0.01" data-validation="price">
+                                <div class="validation-error" id="product-price-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="product-quantity">Daudzums:</label>
-                                <input type="number" class="form-control" id="product-quantity" name="quantity" required>
+                                <input type="number" class="form-control" id="product-quantity" name="quantity" data-validation="quantity">
+                                <div class="validation-error" id="product-quantity-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="product-company">Firmas ID:</label>
-                                <input type="text" class="form-control" id="product-company" name="company_id">
+                                <input type="text" class="form-control" id="product-company" name="company_id" data-validation="company">
+                                <div class="validation-error" id="product-company-error"></div>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="closeModal('add-product-modal')">Atcelt</button>
@@ -276,23 +287,28 @@
                             <input type="hidden" id="edit-product-id" name="id">
                             <div class="form-group">
                                 <label for="edit-product-name">Nosaukums:</label>
-                                <input type="text" class="form-control" id="edit-product-name" name="name" required>
+                                <input type="text" class="form-control" id="edit-product-name" name="name" data-validation="product-name">
+                                <div class="validation-error" id="edit-product-name-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-product-category">Kategorija:</label>
-                                <input type="text" class="form-control" id="edit-product-category" name="category">
+                                <input type="text" class="form-control" id="edit-product-category" name="category" data-validation="category">
+                                <div class="validation-error" id="edit-product-category-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-product-price">Cena:</label>
-                                <input type="number" class="form-control" id="edit-product-price" name="price" step="0.01" required>
+                                <input type="number" class="form-control" id="edit-product-price" name="price" step="0.01" data-validation="price">
+                                <div class="validation-error" id="edit-product-price-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-product-quantity">Daudzums:</label>
-                                <input type="number" class="form-control" id="edit-product-quantity" name="quantity" required>
+                                <input type="number" class="form-control" id="edit-product-quantity" name="quantity" data-validation="quantity">
+                                <div class="validation-error" id="edit-product-quantity-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-product-company">Firmas ID:</label>
-                                <input type="text" class="form-control" id="edit-product-company" name="company_id">
+                                <input type="text" class="form-control" id="edit-product-company" name="company_id" data-validation="company">
+                                <div class="validation-error" id="edit-product-company-error"></div>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="closeModal('edit-product-modal')">Atcelt</button>
@@ -455,29 +471,38 @@
                         <form id="addUserForm" onsubmit="addUser(event)">
                             <div class="form-group">
                                 <label for="add-user-username">Lietotājvārds</label>
-                                <input type="text" class="form-control" id="add-user-username" name="username" required>
+                                <input type="text" class="form-control" id="add-user-username" name="username" data-validation="username">
+                                <div class="validation-error" id="add-user-username-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="add-user-password">Parole</label>
-                                <input type="password" class="form-control" id="add-user-password" name="password" required>
+                                <input type="password" class="form-control" id="add-user-password" name="password" data-validation="password">
+                                <div class="validation-error" id="add-user-password-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="add-user-fullName">Pilns vārds</label>
-                                <input type="text" class="form-control" id="add-user-fullName" name="fullName" required>
+                                <input type="text" class="form-control" id="add-user-fullName" name="fullName" data-validation="fullname">
+                                <div class="validation-error" id="add-user-fullName-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="add-user-role">Loma</label>
-                                <select class="form-select" id="add-user-role" name="role" required>
+                                <select class="form-select" id="add-user-role" name="role" data-validation="role">
+                                    <option value="">Izvēlieties lomu</option>
                                     <option value="user">User</option>
                                     <option value="admin">Admin</option>
+                                    <option value="worker">Worker</option>
+                                    <option value="organizer">Organizer</option>
                                 </select>
+                                <div class="validation-error" id="add-user-role-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="add-user-status">Statuss</label>
-                                <select class="form-select" id="add-user-status" name="status" required>
+                                <select class="form-select" id="add-user-status" name="status" data-validation="status">
+                                    <option value="">Izvēlieties statusu</option>
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
+                                <div class="validation-error" id="add-user-status-error"></div>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="closeModal('addUserModal')">Close</button>
@@ -500,27 +525,33 @@
                             <input type="hidden" name="userId">
                             <div class="form-group">
                                 <label for="edit-user-username-input">Lietotājvārds</label>
-                                <input type="text" class="form-control" id="edit-user-username-input" name="username" required>
+                                <input type="text" class="form-control" id="edit-user-username-input" name="username" data-validation="username">
+                                <div class="validation-error" id="edit-user-username-input-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-user-fullName">Pilns vārds</label>
-                                <input type="text" class="form-control" id="edit-user-fullName" name="fullName" required>
+                                <input type="text" class="form-control" id="edit-user-fullName" name="fullName" data-validation="fullname">
+                                <div class="validation-error" id="edit-user-fullName-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-user-role">Loma</label>
-                                <select class="form-select" id="edit-user-role" name="role" required>
+                                <select class="form-select" id="edit-user-role" name="role" data-validation="role">
+                                    <option value="">Izvēlieties lomu</option>
                                     <option value="user">User</option>
                                     <option value="admin">Admin</option>
                                     <option value="worker">Worker</option>
                                     <option value="organizer">Organizer</option>
                                 </select>
+                                <div class="validation-error" id="edit-user-role-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-user-status">Statuss</label>
-                                <select class="form-select" id="edit-user-status" name="status" required>
+                                <select class="form-select" id="edit-user-status" name="status" data-validation="status">
+                                    <option value="">Izvēlieties statusu</option>
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
+                                <div class="validation-error" id="edit-user-status-error"></div>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="closeModal('editUserModal')">Close</button>

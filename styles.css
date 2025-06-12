@@ -512,26 +512,46 @@ body {
 /* Notifications */
 .notification {
     position: fixed;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px 20px;
+    padding: 12px 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 300px;
+    word-wrap: break-word;
 }
 
 .notification.show {
-    display: block;
-    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
 }
 
 .notification.error {
-    background-color: #f44336;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.notification.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.notification.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
 }
 
 /* Responsive Styles */
@@ -901,4 +921,50 @@ body {
         transform: translateX(0);
         opacity: 1;
     }
+}
+
+/* Form validation styles */
+.validation-error {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+    font-weight: 500;
+}
+
+.form-group input.error,
+.form-group select.error {
+    border-color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.form-group input.error:focus,
+.form-group select.error:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-group input:valid:not(.error),
+.form-group select:valid:not(.error) {
+    border-color: #28a745;
+}
+
+.form-group input:valid:not(.error):focus,
+.form-group select:valid:not(.error):focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Hide logo and user info for "user" role */
+.user-role-user .logo,
+.user-role-user .user-info {
+    display: none;
+}
+
+.user-role-user .sidebar {
+    width: 200px;
+}
+
+.user-role-user .main-content {
+    margin-left: 200px;
 } 

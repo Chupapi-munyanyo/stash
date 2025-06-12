@@ -1,3 +1,92 @@
+// Demo users for authentication (since API is not available)
+const demoUsers = [
+    {
+        id: 1,
+        username: 'admin',
+        password: 'admin123',
+        full_name: 'Administrators',
+        role: 'admin',
+        status: 'active'
+    },
+    {
+        id: 2,
+        username: 'worker',
+        password: 'worker123',
+        full_name: 'Noliktavas darbinieks',
+        role: 'worker',
+        status: 'active'
+    },
+    {
+        id: 3,
+        username: 'organizer',
+        password: 'org123',
+        full_name: 'Plauktu kārtotājs',
+        role: 'organizer',
+        status: 'active'
+    },
+    {
+        id: 4,
+        username: 'user',
+        password: 'user123',
+        full_name: 'Parastais lietotājs',
+        role: 'user',
+        status: 'active'
+    }
+];
+
+// Demo data for products and orders
+let demoProducts = [
+    {
+        id: 1,
+        name: 'Milti',
+        category_name: 'Pulveris',
+        price: 12.00,
+        company_id: 'Raicha',
+        quantity: 12
+    },
+    {
+        id: 2,
+        name: 'Ūdens',
+        category_name: 'Šķidrums',
+        price: 1.50,
+        company_id: 'Raicha',
+        quantity: 1111
+    },
+    {
+        id: 3,
+        name: 'Tabletes',
+        category_name: 'Tabletes',
+        price: 25.99,
+        company_id: 'Raicha',
+        quantity: 12
+    }
+];
+
+let demoOrders = [
+    {
+        id: 1,
+        order_number: 'ORD001',
+        status: 'Gaida',
+        created_by_username: 'Jānis Bērziņš',
+        items: [
+            { product_name: 'Milti', quantity: 2 },
+            { product_name: 'Ūdens', quantity: 5 }
+        ],
+        created_at: '2023-10-26'
+    },
+    {
+        id: 2,
+        order_number: 'ORD002',
+        status: 'Pabeigts',
+        created_by_username: 'Anna Liepa',
+        items: [
+            { product_name: 'Milti', quantity: 1 },
+            { product_name: 'Tabletes', quantity: 3 }
+        ],
+        created_at: '2023-10-25'
+    }
+];
+
 // Current user data
 let currentUser = null;
 let currentRole = null;
@@ -22,39 +111,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Login form submission
     document.getElementById('login-form').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+        if (!validateForm('login-form')) return;
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-        try {
-            const response = await fetch('api/auth.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                currentUser = data.user;
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('app-container').style.display = 'block';
-                updateUIForUser(currentUser);
-                loadInitialData();
-                showNotification('Login successful!', 'success');
-            } else {
-                showNotification(data.message || 'Login failed', 'error');
-            }
-        } catch (error) {
-            console.error('Error during login:', error);
-            showNotification('An error occurred during login. Please try again.', 'error');
+        // Simple authentication using demo users
+        const user = demoUsers.find(u => u.username === username && u.password === password);
+        
+        if (user) {
+            // Remove password from user object before storing
+            const { password, ...userWithoutPassword } = user;
+            currentUser = userWithoutPassword;
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+            updateUIForUser(currentUser);
+            loadInitialData();
+            showNotification('Pieslēgšanās veiksmīga!', 'success');
+        } else {
+            showNotification('Nepareizs lietotājvārds vai parole!', 'error');
         }
     });
 
     // Registration form submission
     document.getElementById('register-form').addEventListener('submit', async function(e) {
         e.preventDefault();
+        if (!validateForm('register-form')) return;
         await register();
     });
     
@@ -66,74 +149,58 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Form submissions
+    // Form submissions with validation
     document.getElementById('add-product-form')?.addEventListener('submit', function(e) {
         e.preventDefault();
-        addProduct();
+        if (!validateForm('add-product-form')) {
+            showNotification('Lūdzu aizpildiet visus obligātos laukus pareizi!', 'error');
+            return;
+        }
+        addProduct(e);
     });
     
     document.getElementById('add-order-form')?.addEventListener('submit', function(e) {
         e.preventDefault();
-        addOrder();
+        if (!validateForm('add-order-form')) {
+            showNotification('Lūdzu aizpildiet visus obligātos laukus pareizi!', 'error');
+            return;
+        }
+        addOrder(e);
     });
     
     document.getElementById('add-user-form')?.addEventListener('submit', function(e) {
         e.preventDefault();
-        addUser();
+        if (!validateForm('addUserForm')) {
+            showNotification('Lūdzu aizpildiet visus obligātos laukus pareizi!', 'error');
+            return;
+        }
+        addUser(e);
     });
     
     document.getElementById('edit-user-form')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        await saveEditedUser();
+        if (!validateForm('editUserForm')) {
+            showNotification('Lūdzu aizpildiet visus obligātos laukus pareizi!', 'error');
+            return;
+        }
+        await updateUser(e);
     });
 
     document.getElementById('edit-product-form')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        await updateProduct();
+        if (!validateForm('edit-product-form')) {
+            showNotification('Lūdzu aizpildiet visus obligātos laukus pareizi!', 'error');
+            return;
+        }
+        await updateProduct(e);
     });
 
     // Initialize mobile menu
     handleMobileMenu();
     window.addEventListener('resize', handleMobileMenu);
 
-    // Add input event listeners for real-time validation
-    document.getElementById('username').addEventListener('input', function() {
-        this.value = this.value.trim();
-        validateUsername(this.value);
-    });
-    document.getElementById('password').addEventListener('input', function() {
-        this.value = this.value.trim();
-        validatePassword(this.value);
-    });
-
-    // Registration form validation (assuming #reg-username etc. exist)
-    document.getElementById('reg-username')?.addEventListener('input', function() {
-        this.value = this.value.trim();
-        validateUsername(this.value);
-    });
-    document.getElementById('reg-password')?.addEventListener('input', function() {
-        this.value = this.value.trim();
-        validatePassword(this.value);
-    });
-    document.getElementById('reg-fullname')?.addEventListener('input', function() {
-        validateFullName(this.value);
-    });
-
-    // User form validation (for add/edit user modals)
-    document.getElementById('user-username')?.addEventListener('input', function() {
-        this.value = this.value.trim();
-        validateUsername(this.value);
-    });
-    document.getElementById('user-password')?.addEventListener('input', function() {
-        this.value = this.value.trim();
-        validatePassword(this.value);
-    });
-    document.getElementById('user-fullname')?.addEventListener('input', function() {
-        validateFullName(this.value);
-    });
-    document.getElementById('edit-fullname')?.addEventListener('input', function() {
-        validateFullName(this.value);
-    });
+    // Add real-time validation for all input fields
+    setupRealTimeValidation();
 
     // Close sidebar when clicking outside on mobile
     document.addEventListener('click', function(e) {
@@ -148,60 +215,212 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Validation functions
+// Setup real-time validation for all input fields
+function setupRealTimeValidation() {
+    // Get all input fields with data-validation attribute
+    const inputs = document.querySelectorAll('input[data-validation], select[data-validation]');
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            validateField(this);
+        });
+        
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+        
+        // For select elements, also listen for change event
+        if (input.tagName === 'SELECT') {
+            input.addEventListener('change', function() {
+                validateField(this);
+            });
+        }
+    });
+}
+
+// Comprehensive validation functions
+function validateField(field) {
+    const validationType = field.getAttribute('data-validation');
+    const value = field.value.trim();
+    const errorElement = document.getElementById(field.id + '-error');
+    
+    if (!errorElement) return true;
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    switch (validationType) {
+        case 'username':
+            isValid = validateUsername(value);
+            if (!isValid) errorMessage = 'Lietotājvārdam jābūt vismaz 3 rakstzīmes garam un nedrīkst saturēt atstarpes!';
+            break;
+        case 'password':
+            isValid = validatePassword(value);
+            if (!isValid) errorMessage = 'Parolei jābūt vismaz 3 rakstzīmes garai un nedrīkst saturēt atstarpes!';
+            break;
+        case 'fullname':
+            isValid = validateFullName(value);
+            if (!isValid) errorMessage = 'Vārdam jābūt vismaz 3 rakstzīmes garam un var saturēt tikai burtus un atstarpes!';
+            break;
+        case 'product-name':
+            isValid = validateProductName(value);
+            if (!isValid) errorMessage = 'Produkta nosaukumam jābūt vismaz 2 rakstzīmes garam un nedrīkst būt tukšs vai saturēt tikai punktus!';
+            break;
+        case 'category':
+            isValid = validateCategory(value);
+            if (!isValid) errorMessage = 'Kategorijai jābūt vismaz 2 rakstzīmes garai un nedrīkst būt tukša vai saturēt tikai punktus!';
+            break;
+        case 'price':
+            isValid = validatePrice(value);
+            if (!isValid) errorMessage = 'Cenai jābūt pozitīvam skaitlim!';
+            break;
+        case 'quantity':
+            isValid = validateQuantity(value);
+            if (!isValid) errorMessage = 'Daudzumam jābūt pozitīvam veselam skaitlim!';
+            break;
+        case 'company':
+            isValid = validateCompany(value);
+            if (!isValid) errorMessage = 'Firmas ID jābūt vismaz 2 rakstzīmes garam un nedrīkst būt tukšs vai saturēt tikai punktus!';
+            break;
+        case 'role':
+            isValid = validateRole(value);
+            if (!isValid) errorMessage = 'Lūdzu izvēlieties lomu!';
+            break;
+        case 'status':
+            isValid = validateStatus(value);
+            if (!isValid) errorMessage = 'Lūdzu izvēlieties statusu!';
+            break;
+        case 'order-product':
+            isValid = validateOrderProduct(value);
+            if (!isValid) errorMessage = 'Lūdzu izvēlieties produktu!';
+            break;
+        case 'order-quantity':
+            isValid = validateOrderQuantity(value);
+            if (!isValid) errorMessage = 'Daudzumam jābūt pozitīvam veselam skaitlim!';
+            break;
+    }
+    
+    // Update error display
+    if (isValid) {
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+        field.classList.remove('error');
+    } else {
+        errorElement.textContent = errorMessage;
+        errorElement.style.display = 'block';
+        field.classList.add('error');
+    }
+    
+    return isValid;
+}
+
+// Validate entire form
+function validateForm(formId) {
+    const form = document.getElementById(formId);
+    if (!form) return true;
+    
+    const fields = form.querySelectorAll('input[data-validation], select[data-validation]');
+    let isValid = true;
+    
+    fields.forEach(field => {
+        if (!validateField(field)) {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+// Individual validation functions
 function validateUsername(username) {
-    if (!username || username.length < 3) {
-        showNotification('Lietotājvārdam jābūt vismaz 3 rakstzīmes garam!', 'error');
-        return false;
-    }
-    if (username.includes(' ')) {
-        showNotification('Lietotājvārds nedrīkst saturēt atstarpes!', 'error');
-        return false;
-    }
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        showNotification('Lietotājvārds var saturēt tikai burtus, ciparus un apakšsvītru!', 'error');
-        return false;
-    }
+    if (!username || username.length < 3) return false;
+    if (username.trim() !== username) return false; // No leading/trailing spaces
+    if (username.includes(' ')) return false; // No spaces
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) return false; // Only letters, numbers, underscore
     return true;
 }
 
 function validatePassword(password) {
-    if (!password || password.length < 3) {
-        showNotification('Parolei jābūt vismaz 3 rakstzīmes garai!', 'error');
-        return false;
-    }
-    if (password.includes(' ')) {
-        showNotification('Parole nedrīkst saturēt atstarpes!', 'error');
-        return false;
-    }
-    if (!/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(password)) {
-        showNotification('Parole var saturēt tikai burtus, ciparus un speciālos simbolus!', 'error');
-        return false;
-    }
+    if (!password || password.length < 3) return false;
+    if (password.trim() !== password) return false; // No leading/trailing spaces
+    if (password.includes(' ')) return false; // No spaces
+    if (!/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(password)) return false;
     return true;
 }
 
 function validateFullName(fullName) {
-    if (!fullName || fullName.length < 3) {
-        showNotification('Vārdam jābūt vismaz 3 rakstzīmes garam!', 'error');
-        return false;
-    }
-    if (/[0-9]/.test(fullName)) {
-        showNotification('Vārds nedrīkst saturēt ciparus!', 'error');
-        return false;
-    }
-    if (!/^[a-zA-ZāĀčČēĒģĢīĪķĶļĻņŅšŠūŪžŽ\s]+$/.test(fullName)) {
-        showNotification('Vārds var saturēt tikai burtus un atstarpes!', 'error');
-        return false;
-    }
+    if (!fullName || fullName.length < 3) return false;
+    if (fullName.trim() !== fullName) return false; // No leading/trailing spaces
+    if (/[0-9]/.test(fullName)) return false; // No numbers
+    if (!/^[a-zA-ZāĀčČēĒģĢīĪķĶļĻņŅšŠūŪžŽ\s]+$/.test(fullName)) return false;
+    return true;
+}
+
+function validateProductName(name) {
+    if (!name || name.length < 2) return false;
+    if (name.trim() !== name) return false; // No leading/trailing spaces
+    if (name.trim().length === 0) return false; // Not just spaces
+    if (name.trim() === '.') return false; // Not just a dot
+    if (name.trim() === '...') return false; // Not just dots
+    if (/^\.+$/.test(name.trim())) return false; // Not just multiple dots
+    return true;
+}
+
+function validateCategory(category) {
+    if (!category || category.length < 2) return false;
+    if (category.trim() !== category) return false; // No leading/trailing spaces
+    if (category.trim().length === 0) return false; // Not just spaces
+    if (category.trim() === '.') return false; // Not just a dot
+    if (category.trim() === '...') return false; // Not just dots
+    if (/^\.+$/.test(category.trim())) return false; // Not just multiple dots
+    return true;
+}
+
+function validatePrice(price) {
+    if (!price || isNaN(price)) return false;
+    const numPrice = parseFloat(price);
+    if (numPrice <= 0) return false;
+    return true;
+}
+
+function validateQuantity(quantity) {
+    if (!quantity || isNaN(quantity)) return false;
+    const numQuantity = parseInt(quantity);
+    if (numQuantity <= 0 || !Number.isInteger(numQuantity)) return false;
+    return true;
+}
+
+function validateCompany(company) {
+    if (!company || company.length < 2) return false;
+    if (company.trim() !== company) return false; // No leading/trailing spaces
+    if (company.trim().length === 0) return false; // Not just spaces
+    if (company.trim() === '.') return false; // Not just a dot
+    if (company.trim() === '...') return false; // Not just dots
+    if (/^\.+$/.test(company.trim())) return false; // Not just multiple dots
     return true;
 }
 
 function validateRole(role) {
-    if (!role) {
-        showNotification('Loma ir obligāta!', 'error');
-        return false;
-    }
+    if (!role || role === '') return false;
+    const validRoles = ['user', 'admin', 'worker', 'organizer'];
+    return validRoles.includes(role);
+}
+
+function validateStatus(status) {
+    if (!status || status === '') return false;
+    const validStatuses = ['active', 'inactive'];
+    return validStatuses.includes(status);
+}
+
+function validateOrderProduct(product) {
+    if (!product || product === '') return false;
+    return true;
+}
+
+function validateOrderQuantity(quantity) {
+    if (!quantity || isNaN(quantity)) return false;
+    const numQuantity = parseInt(quantity);
+    if (numQuantity <= 0 || !Number.isInteger(numQuantity)) return false;
     return true;
 }
 
@@ -243,7 +462,21 @@ function updateUIForUser(user) {
         const appContainer = document.getElementById('app-container');
         if (loginContainer) loginContainer.style.display = 'flex';
         if (appContainer) appContainer.style.display = 'none';
+        
+        // Remove user role class from body
+        document.body.classList.remove('user-role-user');
         return;
+    }
+
+    // Debug: Log user role
+    console.log('User role:', user.role);
+    console.log('User data:', user);
+
+    // Add or remove user role class from body
+    if (user.role === 'user') {
+        document.body.classList.add('user-role-user');
+    } else {
+        document.body.classList.remove('user-role-user');
     }
 
     // Update user info in sidebar
@@ -260,22 +493,31 @@ function updateUIForUser(user) {
             const dataPage = link.getAttribute('data-page'); // Get data-page attribute
             const dataRoles = link.getAttribute('data-roles');
             
-            // Check if it's a "page" link (has data-page attribute)
-            if (dataPage) {
-                if (dataRoles) {
-                    const allowedRoles = dataRoles.split(',');
-                    if (allowedRoles.includes(user.role)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                } else {
-                    // Always show links without data-roles (e.g., Home, Logout)
+            // Special handling for "user" role - only show orders and logout
+            if (user.role === 'user') {
+                if (dataPage === 'orders' || !dataPage) { // Show orders and logout (logout has no data-page)
                     item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
                 }
             } else {
-                // For logout or other non-page links, ensure they are visible
-                item.style.display = 'block';
+                // For other roles, use the existing logic
+                if (dataPage) {
+                    if (dataRoles) {
+                        const allowedRoles = dataRoles.split(',');
+                        if (allowedRoles.includes(user.role)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    } else {
+                        // Always show links without data-roles (e.g., Home, Logout)
+                        item.style.display = 'block';
+                    }
+                } else {
+                    // For logout or other non-page links, ensure they are visible
+                    item.style.display = 'block';
+                }
             }
         }
     });
@@ -285,14 +527,47 @@ function updateUIForUser(user) {
     const appContainer = document.getElementById('app-container');
     if (loginContainer) loginContainer.style.display = 'none';
     if (appContainer) appContainer.style.display = 'flex';
+
+    // Auto-redirect "user" role to orders page (not home)
+    if (user.role === 'user') {
+        // Hide all pages first
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => {
+            page.style.display = 'none';
+            page.classList.remove('active');
+        });
+        
+        // Show orders page for users
+        const ordersPage = document.getElementById('orders-page');
+        if (ordersPage) {
+            ordersPage.style.display = 'block';
+            ordersPage.classList.add('active');
+        }
+        
+        // Update navigation active state
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => link.classList.remove('active'));
+        const ordersLink = document.querySelector('.nav-link[data-page="orders"]');
+        if (ordersLink) {
+            ordersLink.classList.add('active');
+        }
+        
+        // Show welcome notification for users
+        showNotification(`Laipni lūdzam, ${user.full_name}! Jūs varat veikt pasūtījumus.`, 'success');
+    }
 }
 
 async function loadInitialData() {
     if (currentUser) {
-        await loadProducts();
+        // Load orders for all users
         await loadOrders();
-        if (currentUser.role === 'admin') {
-            await loadUsers();
+        
+        // Load additional data based on role
+        if (currentUser.role !== 'user') {
+            await loadProducts();
+            if (currentUser.role === 'admin') {
+                await loadUsers();
+            }
         }
     }
 }
@@ -300,15 +575,8 @@ async function loadInitialData() {
 // User Management Functions
 async function loadUsers() {
     try {
-        const response = await fetch('api/users.php');
-        const data = await response.json();
-        
-        if (data.success) {
-            console.log('Users fetched successfully:', data.users);
-            renderUsersTable(data.users || []);
-        } else {
-            showNotification(data.message || 'Error loading users', 'error');
-        }
+        // Use demo users data instead of API call
+        renderUsersTable(demoUsers);
     } catch (error) {
         console.error('Error loading users:', error);
         showNotification('Error loading users', 'error');
@@ -316,54 +584,40 @@ async function loadUsers() {
 }
 
 async function register() {
-    const username = document.getElementById('reg-username').value;
-    const password = document.getElementById('reg-password').value;
-    const fullName = document.getElementById('reg-fullname').value;
+    const username = document.getElementById('reg-username').value.trim();
+    const password = document.getElementById('reg-password').value.trim();
+    const fullName = document.getElementById('reg-fullname').value.trim();
 
-    if (!validateUsername(username) || !validatePassword(password) || !validateFullName(fullName)) {
+    // Check if username already exists
+    const existingUser = demoUsers.find(u => u.username === username);
+    if (existingUser) {
+        showNotification('Lietotājvārds jau eksistē!', 'error');
         return;
     }
 
-    try {
-        const response = await fetch('api/users.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                username, 
-                password, 
-                full_name: fullName, 
-                role: 'pending', 
-                status: 'pending' 
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            showNotification('Registration successful! Please wait for admin approval.', 'success');
-            showLoginForm();
-            document.getElementById('register-form').reset();
-        } else {
-            showNotification(data.message || 'Error during registration', 'error');
-        }
-    } catch (error) {
-        console.error('Error during registration:', error);
-        showNotification('An error occurred during registration. Please try again.', 'error');
-    }
+    // Add new user to demoUsers array
+    const newUser = {
+        id: demoUsers.length + 1,
+        username: username,
+        password: password,
+        full_name: fullName,
+        role: 'user',
+        status: 'active'
+    };
+    
+    demoUsers.push(newUser);
+    
+    showNotification('Reģistrācija veiksmīga! Jūs varat pieslēgties ar saviem datiem.', 'success');
+    showLoginForm();
+    document.getElementById('register-form').reset();
 }
 
-async function addUser() {
-    const username = document.getElementById('user-username').value;
-    const password = document.getElementById('user-password').value;
-    const fullName = document.getElementById('user-fullname').value;
-    const role = document.getElementById('user-role').value;
-    const status = 'pending'; // Default status for new users, as there's no status field in add-user-modal
-
-    if (!validateUsername(username) || !validatePassword(password) || !validateFullName(fullName) || !validateRole(role)) {
-        return;
-    }
+async function addUser(e) {
+    const username = document.getElementById('add-user-username').value.trim();
+    const password = document.getElementById('add-user-password').value.trim();
+    const fullName = document.getElementById('add-user-fullName').value.trim();
+    const role = document.getElementById('add-user-role').value;
+    const status = document.getElementById('add-user-status').value;
 
     try {
         const response = await fetch('api/users.php', {
@@ -377,7 +631,8 @@ async function addUser() {
         const data = await response.json();
         if (data.success) {
             showNotification('User added successfully', 'success');
-            closeModal('add-user-modal'); // Corrected modal ID
+            closeModal('addUserModal');
+            document.getElementById('addUserForm').reset();
             loadUsers(); // Reload users after adding
         } else {
             showNotification(data.message || 'Error adding user', 'error');
@@ -389,6 +644,12 @@ async function addUser() {
 }
 
 async function editUser(userId) {
+    // Prevent users with "user" role from editing other users
+    if (currentUser && currentUser.role === 'user') {
+        showNotification('Jums nav atļauts rediģēt lietotājus!', 'error');
+        return;
+    }
+
     try {
         const response = await fetch(`api/users.php?id=${userId}`);
         const data = await response.json();
@@ -412,13 +673,13 @@ async function editUser(userId) {
     }
 }
 
-async function updateUser(event) {
-    event.preventDefault();
+async function updateUser(e) {
+    e.preventDefault();
     
-    const form = event.target;
+    const form = e.target;
     const userId = form.querySelector('input[name="userId"]').value;
-    const username = form.querySelector('#edit-user-username-input').value;
-    const fullName = form.querySelector('#edit-user-fullName').value;
+    const username = form.querySelector('#edit-user-username-input').value.trim();
+    const fullName = form.querySelector('#edit-user-fullName').value.trim();
     const role = form.querySelector('#edit-user-role').value;
     const status = form.querySelector('#edit-user-status').value;
 
@@ -454,6 +715,12 @@ async function updateUser(event) {
 }
 
 async function deleteUser(id) {
+    // Prevent users with "user" role from deleting other users
+    if (currentUser && currentUser.role === 'user') {
+        showNotification('Jums nav atļauts dzēst lietotājus!', 'error');
+        return;
+    }
+
     if (!confirm('Vai tiešām vēlaties dzēst šo lietotāju?')) {
         return;
     }
@@ -489,27 +756,29 @@ async function deleteUser(id) {
 // Product Management Functions
 async function loadProducts() {
     try {
-        const response = await fetch('api/products.php');
-        const data = await response.json();
-        if (data.success) {
-            renderProductsTable(data.products);
-        } else {
-            showNotification('Error loading products', 'error');
-        }
+        // Use demo products data instead of API call
+        renderProductsTable(demoProducts);
     } catch (error) {
         console.error('Error loading products:', error);
         showNotification('Error loading products', 'error');
     }
 }
 
-async function addProduct() {
-    const name = document.getElementById('product-name').value;
-    const category = document.getElementById('product-category').value;
+async function addProduct(e) {
+    const name = document.getElementById('product-name').value.trim();
+    const category = document.getElementById('product-category').value.trim();
     const price = document.getElementById('product-price').value;
     const quantity = document.getElementById('product-quantity').value;
-    const companyId = document.getElementById('product-company').value;
+    const companyId = document.getElementById('product-company').value.trim();
 
-    if (!validateProductData(name, price, quantity)) {
+    // Double-check validation before sending to server
+    if (!validateProductName(name)) {
+        showNotification('Produkta nosaukumam jābūt vismaz 2 rakstzīmes garam un nedrīkst būt tukšs vai saturēt tikai punktus!', 'error');
+        return;
+    }
+    
+    if (!validateCategory(category)) {
+        showNotification('Kategorijai jābūt vismaz 2 rakstzīmes garai un nedrīkst būt tukša vai saturēt tikai punktus!', 'error');
         return;
     }
 
@@ -520,8 +789,8 @@ async function addProduct() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-        name,
-        category,
+                name,
+                category,
                 price: parseFloat(price),
                 quantity: parseInt(quantity),
                 company_id: companyId || null
@@ -531,16 +800,16 @@ async function addProduct() {
         const data = await response.json();
 
         if (data.success) {
-            showNotification('Product added successfully', 'success');
+            showNotification('Produkts veiksmīgi pievienots!', 'success');
             closeModal('add-product-modal');
             document.getElementById('add-product-form').reset();
             loadProducts();
         } else {
-            showNotification(data.message || 'Error adding product', 'error');
+            showNotification(data.message || 'Kļūda pievienojot produktu', 'error');
         }
     } catch (error) {
         console.error('Error adding product:', error);
-        showNotification('Error adding product', 'error');
+        showNotification('Kļūda pievienojot produktu', 'error');
     }
 }
 
@@ -571,15 +840,23 @@ async function editProduct(productId) {
     }
 }
 
-async function updateProduct() {
+async function updateProduct(e) {
+    e.preventDefault();
     const id = document.getElementById('edit-product-id').value;
-    const name = document.getElementById('edit-product-name').value;
-    const category = document.getElementById('edit-product-category').value;
+    const name = document.getElementById('edit-product-name').value.trim();
+    const category = document.getElementById('edit-product-category').value.trim();
     const price = document.getElementById('edit-product-price').value;
     const quantity = document.getElementById('edit-product-quantity').value;
-    const companyId = document.getElementById('edit-product-company').value;
+    const companyId = document.getElementById('edit-product-company').value.trim();
 
-    if (!validateProductData(name, price, quantity)) {
+    // Double-check validation before sending to server
+    if (!validateProductName(name)) {
+        showNotification('Produkta nosaukumam jābūt vismaz 2 rakstzīmes garam un nedrīkst būt tukšs vai saturēt tikai punktus!', 'error');
+        return;
+    }
+    
+    if (!validateCategory(category)) {
+        showNotification('Kategorijai jābūt vismaz 2 rakstzīmes garai un nedrīkst būt tukša vai saturēt tikai punktus!', 'error');
         return;
     }
 
@@ -602,32 +879,16 @@ async function updateProduct() {
         const data = await response.json();
 
         if (data.success) {
-            showNotification('Product updated successfully', 'success');
+            showNotification('Produkts veiksmīgi atjaunināts!', 'success');
             closeModal('edit-product-modal');
             loadProducts();
         } else {
-            showNotification(data.message || 'Error updating product', 'error');
+            showNotification(data.message || 'Kļūda atjauninot produktu', 'error');
         }
     } catch (error) {
         console.error('Error updating product:', error);
-        showNotification('Error updating product', 'error');
+        showNotification('Kļūda atjauninot produktu', 'error');
     }
-}
-
-function validateProductData(name, price, quantity) {
-    if (!name) {
-        showNotification('Product name is required', 'error');
-        return false;
-    }
-    if (!price || isNaN(price) || parseFloat(price) <= 0) {
-        showNotification('Valid price is required', 'error');
-        return false;
-    }
-    if (!quantity || isNaN(quantity) || parseInt(quantity) < 0) {
-        showNotification('Valid quantity is required', 'error');
-        return false;
-    }
-    return true;
 }
 
 function renderProductsTable(products) {
@@ -686,79 +947,67 @@ async function deleteProduct(id) {
 // Order Management Functions
 async function loadOrders() {
     try {
-        console.log('Starting to load orders...');
-        const response = await fetch('api/orders.php');
-        console.log('Orders API Response:', response);
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-        
-        const data = await response.json();
-        console.log('Parsed orders data:', data);
-        
-        if (data.status === 'success') {
-            console.log('Success status confirmed, data:', data.data);
-            const tbody = document.querySelector('#orders-table tbody');
-            console.log('Found table body:', tbody);
-            if (tbody) {
-                renderOrdersTable(data.data);
-                updateHomeStats();
-            } else {
-                console.error('Orders table body not found in DOM');
-                showNotification('Error: Orders table not found', 'error');
-            }
-        } else {
-            console.error('API returned non-success status:', data);
-            showNotification('Error loading orders: ' + (data.message || 'Unknown error'), 'error');
-        }
+        console.log('Loading orders from demo data...');
+        // Use demo orders data instead of API call
+        renderOrdersTable(demoOrders);
+        updateHomeStats();
     } catch (error) {
-        console.error('Error in loadOrders:', error);
-        showNotification('Error loading orders: ' + error.message, 'error');
+        console.error('Error loading orders:', error);
+        showNotification('Error loading orders', 'error');
     }
 }
 
-async function addOrder() {
+async function addOrder(e) {
     const created_by = currentUser.id; // Get ID from current user
     const items = [];
-
-    document.querySelectorAll('.order-item').forEach(itemGroup => { // Corrected to .order-item
-        const productId = itemGroup.querySelector('.order-product').value; // Corrected to .order-product
-        const quantity = parseInt(itemGroup.querySelector('.order-quantity').value); // Corrected to .order-quantity
-        if (productId && quantity > 0) {
-            items.push({ product_id: productId, quantity: quantity });
+    
+    // Get all order items from the form
+    const orderItems = document.querySelectorAll('.order-item');
+    orderItems.forEach(item => {
+        const productSelect = item.querySelector('.order-product');
+        const quantityInput = item.querySelector('.order-quantity');
+        
+        if (productSelect && quantityInput && productSelect.value && quantityInput.value) {
+            const product = demoProducts.find(p => p.id == productSelect.value);
+            if (product) {
+                items.push({
+                    product_id: product.id,
+                    product_name: product.name,
+                    quantity: parseInt(quantityInput.value)
+                });
+            }
         }
     });
 
     if (items.length === 0) {
-        showNotification('Please add at least one product to the order.', 'error');
+        showNotification('Lūdzu pievienojiet vismaz vienu preci!', 'error');
         return;
     }
 
-    try {
-        const response = await fetch('api/orders.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ created_by, items })
-        });
+    // Create new order
+    const newOrder = {
+        id: demoOrders.length + 1,
+        order_number: `ORD${String(demoOrders.length + 1).padStart(3, '0')}`,
+        status: 'Gaida',
+        created_by_username: currentUser.full_name,
+        items: items,
+        created_at: new Date().toISOString().split('T')[0]
+    };
 
-        const data = await response.json();
-        if (data.success) {
-            showNotification('Order created successfully', 'success');
-            document.getElementById('add-order-form').reset();
-            document.getElementById('order-items-container').innerHTML = ''; // Clear items
-            // Re-add one empty item after clearing, for a fresh start
-            addOrderItem();
-            closeModal('add-order-modal'); // Corrected modal ID
-            loadOrders();
-            loadProducts(); // Products quantity might have changed
-        } else {
-            showNotification(data.message || 'Error creating order', 'error');
-        }
-    } catch (error) {
-        console.error('Error creating order:', error);
-        showNotification('Error creating order', 'error');
+    // Add to demo orders
+    demoOrders.push(newOrder);
+
+    showNotification('Pasūtījums veiksmīgi izveidots!', 'success');
+    closeModal('add-order-modal');
+    
+    // Clear the order form
+    const orderItemsContainer = document.getElementById('order-items-container');
+    if (orderItemsContainer) {
+        orderItemsContainer.innerHTML = '';
     }
+    
+    // Reload orders
+    loadOrders();
 }
 
 async function completeOrder(id) {
@@ -837,6 +1086,20 @@ function renderUsersTable(users) {
     users.forEach(user => {
         const tr = document.createElement('tr');
         tr.setAttribute('data-user-id', user.id);
+        
+        // Hide action buttons for users with "user" role
+        const showActions = currentUser && currentUser.role !== 'user';
+        const actionButtons = showActions ? `
+            <div class="action-buttons">
+                <button class="btn btn-primary btn-sm" onclick="editUser(${user.id})">
+                    <i class="fas fa-edit"></i> Rediģēt
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
+                    <i class="fas fa-trash"></i> Dzēst
+                </button>
+            </div>
+        ` : '<span class="text-muted">Nav atļauts</span>';
+        
         tr.innerHTML = `
             <td>${user.username || 'N/A'}</td>
             <td>${user.full_name || 'N/A'}</td>
@@ -847,16 +1110,7 @@ function renderUsersTable(users) {
                     ${user.status || 'inactive'}
                 </span>
             </td>
-            <td>
-                <div class="action-buttons">
-                    <button class="btn btn-primary btn-sm" onclick="editUser(${user.id})">
-                        <i class="fas fa-edit"></i> Rediģēt
-                    </button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
-                        <i class="fas fa-trash"></i> Dzēst
-                    </button>
-                </div>
-            </td>
+            <td>${actionButtons}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -909,31 +1163,20 @@ function renderOrdersTable(orders) {
 // Dashboard Stats
 async function updateHomeStats() {
     try {
-        const productsResponse = await fetch('api/products.php');
-        const productsData = await productsResponse.json();
-        if (productsData.status === 'success') {
-            const totalProductsElement = document.getElementById('total-products');
-            if (totalProductsElement) { // Added null check
-                totalProductsElement.textContent = productsData.data.length;
-            }
+        // Use demo data instead of API calls
+        const totalProductsElement = document.getElementById('total-products');
+        if (totalProductsElement) {
+            totalProductsElement.textContent = demoProducts.length;
         }
 
-        const ordersResponse = await fetch('api/orders.php');
-        const ordersData = await ordersResponse.json();
-        if (ordersData.status === 'success') {
-            const totalOrdersElement = document.getElementById('total-orders');
-            if (totalOrdersElement) { // Added null check
-                totalOrdersElement.textContent = ordersData.data.length;
-            }
+        const totalOrdersElement = document.getElementById('total-orders');
+        if (totalOrdersElement) {
+            totalOrdersElement.textContent = demoOrders.length;
         }
 
-        const usersResponse = await fetch('api/users.php');
-        const usersData = await usersResponse.json();
-        if (usersData.status === 'success') {
-            const totalUsersElement = document.getElementById('total-users');
-            if (totalUsersElement) { // Added null check
-                totalUsersElement.textContent = usersData.data.length;
-            }
+        const totalUsersElement = document.getElementById('total-users');
+        if (totalUsersElement) {
+            totalUsersElement.textContent = demoUsers.length;
         }
     } catch (error) {
         console.error('Error updating home stats:', error);
@@ -943,42 +1186,55 @@ async function updateHomeStats() {
 
 // Show specific page
 function showPage(pageId) {
+    // Prevent "user" role from accessing any page other than orders
+    if (currentUser && currentUser.role === 'user' && pageId !== 'orders') {
+        showNotification('Jums nav atļauts piekļūt šai lapai!', 'error');
+        return;
+    }
+
     // Hide all pages
-    document.querySelectorAll('.page').forEach(page => {
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(page => {
         page.style.display = 'none';
+        page.classList.remove('active');
     });
+
+    // Show the selected page
+    const selectedPage = document.getElementById(pageId + '-page');
+    if (selectedPage) {
+        selectedPage.style.display = 'block';
+        selectedPage.classList.add('active');
+    }
+
+    // Update navigation active state
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => link.classList.remove('active'));
     
-    // Show selected page
-    const targetPageElement = document.getElementById(`${pageId}-page`);
-    if (targetPageElement) {
-        targetPageElement.style.display = 'block';
-        
-        // Update active nav link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-        
-        // Load page data after a small delay to ensure DOM is ready
-        setTimeout(() => {
-            if (pageId === 'home') {
-                updateHomeStats();
-            } else if (pageId === 'products') {
+    const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
+
+    // Load page-specific data
+    switch (pageId) {
+        case 'products':
+            if (currentUser && currentUser.role !== 'user') {
                 loadProducts();
-            } else if (pageId === 'orders') {
-                console.log('Loading orders page...');
-                loadOrders();
-            } else if (pageId === 'users') {
+            }
+            break;
+        case 'orders':
+            loadOrders();
+            break;
+        case 'users':
+            if (currentUser && currentUser.role === 'admin') {
                 loadUsers();
             }
-        }, 100);
-    } else {
-        console.error(`Page element with ID ${pageId}-page not found!`);
-        showNotification(`Error: Page not found.`, 'error');
+            break;
+        case 'home':
+            if (currentUser && currentUser.role !== 'user') {
+                updateHomeStats();
+            }
+            break;
     }
 }
 
@@ -987,6 +1243,19 @@ function openModal(modalId) {
     const modalElement = document.getElementById(modalId);
     if (modalElement) {
         modalElement.classList.add('active'); // Add active class to show
+        
+        // Clear any existing validation errors when opening modal
+        const errorElements = modalElement.querySelectorAll('.validation-error');
+        errorElements.forEach(error => {
+            error.textContent = '';
+            error.style.display = 'none';
+        });
+        
+        // Remove error classes from inputs
+        const inputs = modalElement.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.classList.remove('error');
+        });
     } else {
         console.error(`Modal element with ID ${modalId} not found!`);
         showNotification(`Error: Modal not found.`, 'error');
@@ -1001,6 +1270,18 @@ function closeModal(modalId) {
         const form = modalElement.querySelector('form');
         if (form) {
             form.reset();
+            // Clear all validation errors in the modal
+            const errorElements = modalElement.querySelectorAll('.validation-error');
+            errorElements.forEach(error => {
+                error.textContent = '';
+                error.style.display = 'none';
+            });
+            
+            // Remove error classes from inputs
+            const inputs = modalElement.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.classList.remove('error');
+            });
         }
     } else {
         console.error(`Modal element with ID ${modalId} not found!`);
@@ -1019,35 +1300,50 @@ async function addOrderItem() {
     itemGroup.innerHTML = `
         <div class="form-group" style="flex: 2;">
             <label>Produkts:</label>
-            <select name="orderProduct" class="order-product" required>
+            <select name="orderProduct" class="order-product" data-validation="order-product">
                 ${productSelectOptions}
             </select>
+            <div class="validation-error" id="order-product-${orderItemCounter}-error"></div>
         </div>
         <div class="form-group">
             <label>Daudzums:</label>
-            <input type="number" name="orderQuantity" class="order-quantity" min="1" value="1" required>
+            <input type="number" name="orderQuantity" class="order-quantity" min="1" value="1" data-validation="order-quantity">
+            <div class="validation-error" id="order-quantity-${orderItemCounter}-error"></div>
         </div>
         <button type="button" class="btn btn-danger btn-sm" onclick="removeOrderItem(this)">✕</button>
     `;
     if (orderItemsContainer) { // Added null check
         orderItemsContainer.appendChild(itemGroup);
+        
+        // Add validation event listeners to the new fields
+        const newProductSelect = itemGroup.querySelector('.order-product');
+        const newQuantityInput = itemGroup.querySelector('.order-quantity');
+        
+        if (newProductSelect) {
+            newProductSelect.addEventListener('change', function() {
+                validateField(this);
+            });
+        }
+        
+        if (newQuantityInput) {
+            newQuantityInput.addEventListener('input', function() {
+                validateField(this);
+            });
+            newQuantityInput.addEventListener('blur', function() {
+                validateField(this);
+            });
+        }
     }
 }
 
 async function getProductSelectOptions() {
     try {
-        const response = await fetch('api/products.php');
-        const data = await response.json();
-        if (data.success) {
-            let options = '<option value="">Izvēlieties produktu</option>';
-            data.products.forEach(product => {
-                options += `<option value="${product.id}">${product.name} (${product.quantity})</option>`;
-            });
-            return options;
-        } else {
-            showNotification('Error fetching products for order item', 'error');
-            return '';
-        }
+        // Use demo products data instead of API call
+        let options = '<option value="">Izvēlieties produktu</option>';
+        demoProducts.forEach(product => {
+            options += `<option value="${product.id}">${product.name} (${product.quantity})</option>`;
+        });
+        return options;
     } catch (error) {
         console.error('Error fetching products for order item:', error);
         showNotification('Error fetching products for order item', 'error');
@@ -1066,11 +1362,25 @@ function showNotification(message, type = 'success') {
         console.error('Notification container not found!');
         return;
     }
+    
+    // Clear any existing timeout
+    if (notification.timeoutId) {
+        clearTimeout(notification.timeoutId);
+    }
+    
     notification.textContent = message;
-    notification.className = `notification ${type} show`;
-    setTimeout(() => {
-        notification.className = 'notification';
-    }, 3000);
+    notification.className = `notification ${type}`;
+    
+    // Trigger reflow to ensure the transition works
+    notification.offsetHeight;
+    
+    // Show the notification
+    notification.classList.add('show');
+    
+    // Auto-hide after 4 seconds
+    notification.timeoutId = setTimeout(() => {
+        notification.classList.remove('show');
+    }, 4000);
 }
 
 // Sidebar functions
@@ -1209,4 +1519,11 @@ async function generateReport() {
         console.error('Error generating report:', error);
         showNotification('Error generating report', 'error');
     }
+}
+
+// Add saveEditedUser function
+async function saveEditedUser() {
+    const form = document.getElementById('editUserForm');
+    const event = { preventDefault: () => {}, target: form };
+    await updateUser(event);
 }
