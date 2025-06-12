@@ -1,14 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-include_once '../config/database.php';
-
-$database = new Database();
-$db = $database->getConnection();
+require_once 'config.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -25,7 +16,7 @@ switch($method) {
             // Check if specific user ID is requested
             if (isset($_GET['id'])) {
                 $query = "SELECT id, username, full_name, role, status, created_at FROM users WHERE id = ?";
-                $stmt = $db->prepare($query);
+                $stmt = $pdo->prepare($query);
                 $stmt->execute([$_GET['id']]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 
@@ -44,7 +35,7 @@ switch($method) {
             } else {
                 // Get all users
                 $query = "SELECT id, username, full_name, role, status, created_at FROM users ORDER BY created_at DESC";
-                $stmt = $db->prepare($query);
+                $stmt = $pdo->prepare($query);
                 $stmt->execute();
                 
                 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -78,7 +69,7 @@ switch($method) {
             
             // Check if username already exists
             $query = "SELECT id FROM users WHERE username = ?";
-            $stmt = $db->prepare($query);
+            $stmt = $pdo->prepare($query);
             $stmt->execute([$data->username]);
             
             if($stmt->rowCount() > 0) {
@@ -92,7 +83,7 @@ switch($method) {
             
             // Insert new user
             $query = "INSERT INTO users (username, password, full_name, role, status) VALUES (?, ?, ?, ?, ?)";
-            $stmt = $db->prepare($query);
+            $stmt = $pdo->prepare($query);
             
             $password = password_hash($data->password, PASSWORD_DEFAULT);
             $role = isset($data->role) ? $data->role : 'pending';
@@ -136,7 +127,7 @@ switch($method) {
             
             // Check if new username already exists (excluding current user)
             $query = "SELECT id FROM users WHERE username = ? AND id != ?";
-            $stmt = $db->prepare($query);
+            $stmt = $pdo->prepare($query);
             $stmt->execute([$data->username, $data->id]);
             
             if($stmt->rowCount() > 0) {
@@ -150,7 +141,7 @@ switch($method) {
             
             // Update user
             $query = "UPDATE users SET username = ?, full_name = ?, role = ?, status = ? WHERE id = ?";
-            $stmt = $db->prepare($query);
+            $stmt = $pdo->prepare($query);
             
             if($stmt->execute([
                 $data->username,
@@ -189,7 +180,7 @@ switch($method) {
             }
             
             $query = "DELETE FROM users WHERE id = ?";
-            $stmt = $db->prepare($query);
+            $stmt = $pdo->prepare($query);
             
             if($stmt->execute([$data->id])) {
                 echo json_encode([

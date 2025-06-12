@@ -1,14 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-include_once '../config/database.php';
-
-$database = new Database();
-$db = $database->getConnection();
+require_once 'config.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -38,7 +29,7 @@ if ($method === 'POST') {
                          WHERE o.created_at BETWEEN ? AND ?
                          GROUP BY p.id, p.name, c.name
                          ORDER BY total_sold DESC";
-                $stmt = $db->prepare($query);
+                $stmt = $pdo->prepare($query);
                 $stmt->execute([$dateFrom, $dateTo]);
                 break;
                 
@@ -54,7 +45,7 @@ if ($method === 'POST') {
                          WHERE o.created_at BETWEEN ? AND ?
                          GROUP BY o.id, o.order_number, o.created_at, o.status
                          ORDER BY o.created_at DESC";
-                $stmt = $db->prepare($query);
+                $stmt = $pdo->prepare($query);
                 $stmt->execute([$dateFrom, $dateTo]);
                 break;
                 
@@ -63,14 +54,14 @@ if ($method === 'POST') {
                 $query = "SELECT 
                             name as product_name,
                             quantity as current_quantity,
-                            min_quantity,
+                            COALESCE(min_quantity, 0) as min_quantity,
                             CASE 
-                                WHEN quantity <= min_quantity THEN 'low'
+                                WHEN quantity <= COALESCE(min_quantity, 0) THEN 'low'
                                 ELSE 'ok'
                             END as status
                          FROM products
                          ORDER BY quantity ASC";
-                $stmt = $db->prepare($query);
+                $stmt = $pdo->prepare($query);
                 $stmt->execute();
                 break;
                 

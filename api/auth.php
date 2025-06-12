@@ -5,10 +5,7 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-include_once '../config/database.php';
-
-$database = new Database();
-$db = $database->getConnection();
+require_once 'config.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -17,22 +14,23 @@ if (!empty($data->username) && !empty($data->password)) {
     $defaultUsers = [
         'admin' => ['password' => 'admin123', 'role' => 'admin', 'full_name' => 'System Administrator'],
         'worker' => ['password' => 'worker123', 'role' => 'worker', 'full_name' => 'Warehouse Worker'],
-        'organizer' => ['password' => 'org123', 'role' => 'organizer', 'full_name' => 'Shelf Organizer']
+        'organizer' => ['password' => 'org123', 'role' => 'organizer', 'full_name' => 'Shelf Organizer'],
+        'user' => ['password' => 'user123', 'role' => 'user', 'full_name' => 'Regular User']
     ];
 
     if (isset($defaultUsers[$data->username]) && $defaultUsers[$data->username]['password'] === $data->password) {
         // Check if user exists in database
         $query = "SELECT id FROM users WHERE username = ?";
-        $stmt = $db->prepare($query);
+        $stmt = $pdo->prepare($query);
         $stmt->execute([$data->username]);
         
         if ($stmt->rowCount() === 0) {
             // Create user in database if not exists, with hashed default password
             $query = "INSERT INTO users (username, password, full_name, role, status) VALUES (?, ?, ?, ?, 'active')";
-            $stmt = $db->prepare($query);
+            $stmt = $pdo->prepare($query);
             $hashedPassword = password_hash($defaultUsers[$data->username]['password'], PASSWORD_DEFAULT);
             $stmt->execute([$data->username, $hashedPassword, $defaultUsers[$data->username]['full_name'], $defaultUsers[$data->username]['role']]);
-            $userId = $db->lastInsertId();
+            $userId = $pdo->lastInsertId();
         } else {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $userId = $row['id'];
@@ -52,7 +50,7 @@ if (!empty($data->username) && !empty($data->password)) {
     } else {
         // Check database for other users
         $query = "SELECT id, username, password, full_name, role FROM users WHERE username = ?";
-        $stmt = $db->prepare($query);
+        $stmt = $pdo->prepare($query);
         $stmt->execute([$data->username]);
         
         if ($stmt->rowCount() > 0) {

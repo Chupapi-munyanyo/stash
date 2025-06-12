@@ -116,21 +116,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
 
-        // Simple authentication using demo users
-        const user = demoUsers.find(u => u.username === username && u.password === password);
-        
-        if (user) {
-            // Remove password from user object before storing
-            const { password, ...userWithoutPassword } = user;
-            currentUser = userWithoutPassword;
-            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-            updateUIForUser(currentUser);
-            loadInitialData();
-            showNotification('Pieslēgšanās veiksmīga!', 'success');
-        } else {
-            showNotification('Nepareizs lietotājvārds vai parole!', 'error');
+        try {
+            const response = await fetch('api/auth.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                currentUser = data.user;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                updateUIForUser(currentUser);
+                loadInitialData();
+                showNotification('Pieslēgšanās veiksmīga!', 'success');
+            } else {
+                showNotification(data.message || 'Nepareizs lietotājvārds vai parole!', 'error');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showNotification('Kļūda pieslēdzoties!', 'error');
         }
     });
 
@@ -575,8 +585,14 @@ async function loadInitialData() {
 // User Management Functions
 async function loadUsers() {
     try {
-        // Use demo users data instead of API call
-        renderUsersTable(demoUsers);
+        const response = await fetch('api/users.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            renderUsersTable(data.users);
+        } else {
+            showNotification('Error loading users: ' + data.message, 'error');
+        }
     } catch (error) {
         console.error('Error loading users:', error);
         showNotification('Error loading users', 'error');
@@ -588,28 +604,34 @@ async function register() {
     const password = document.getElementById('reg-password').value.trim();
     const fullName = document.getElementById('reg-fullname').value.trim();
 
-    // Check if username already exists
-    const existingUser = demoUsers.find(u => u.username === username);
-    if (existingUser) {
-        showNotification('Lietotājvārds jau eksistē!', 'error');
-        return;
-    }
+    try {
+        const response = await fetch('api/users.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                full_name: fullName,
+                role: 'user',
+                status: 'active'
+            })
+        });
 
-    // Add new user to demoUsers array
-    const newUser = {
-        id: demoUsers.length + 1,
-        username: username,
-        password: password,
-        full_name: fullName,
-        role: 'user',
-        status: 'active'
-    };
-    
-    demoUsers.push(newUser);
-    
-    showNotification('Reģistrācija veiksmīga! Jūs varat pieslēgties ar saviem datiem.', 'success');
-    showLoginForm();
-    document.getElementById('register-form').reset();
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Reģistrācija veiksmīga! Jūs varat pieslēgties ar saviem datiem.', 'success');
+            showLoginForm();
+            document.getElementById('register-form').reset();
+        } else {
+            showNotification(data.message || 'Kļūda reģistrējoties!', 'error');
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        showNotification('Kļūda reģistrējoties!', 'error');
+    }
 }
 
 async function addUser(e) {
@@ -735,7 +757,7 @@ async function deleteUser(id) {
         });
 
         const data = await response.json();
-        if (data.status === 'success') {
+        if (data.success) {
             showNotification('Lietotājs veiksmīgi dzēsts', 'success');
             // Remove the user row from the table
             const userRow = document.querySelector(`#users-table tr[data-user-id="${id}"]`);
@@ -756,8 +778,14 @@ async function deleteUser(id) {
 // Product Management Functions
 async function loadProducts() {
     try {
-        // Use demo products data instead of API call
-        renderProductsTable(demoProducts);
+        const response = await fetch('api/products.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            renderProductsTable(data.products);
+        } else {
+            showNotification('Error loading products: ' + data.message, 'error');
+        }
     } catch (error) {
         console.error('Error loading products:', error);
         showNotification('Error loading products', 'error');
@@ -947,10 +975,16 @@ async function deleteProduct(id) {
 // Order Management Functions
 async function loadOrders() {
     try {
-        console.log('Loading orders from demo data...');
-        // Use demo orders data instead of API call
-        renderOrdersTable(demoOrders);
-        updateHomeStats();
+        console.log('Loading orders from API...');
+        const response = await fetch('api/orders.php');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            renderOrdersTable(data.data);
+            updateHomeStats();
+        } else {
+            showNotification('Error loading orders: ' + data.message, 'error');
+        }
     } catch (error) {
         console.error('Error loading orders:', error);
         showNotification('Error loading orders', 'error');
@@ -968,14 +1002,10 @@ async function addOrder(e) {
         const quantityInput = item.querySelector('.order-quantity');
         
         if (productSelect && quantityInput && productSelect.value && quantityInput.value) {
-            const product = demoProducts.find(p => p.id == productSelect.value);
-            if (product) {
-                items.push({
-                    product_id: product.id,
-                    product_name: product.name,
-                    quantity: parseInt(quantityInput.value)
-                });
-            }
+            items.push({
+                product_id: parseInt(productSelect.value),
+                quantity: parseInt(quantityInput.value)
+            });
         }
     });
 
@@ -984,30 +1014,39 @@ async function addOrder(e) {
         return;
     }
 
-    // Create new order
-    const newOrder = {
-        id: demoOrders.length + 1,
-        order_number: `ORD${String(demoOrders.length + 1).padStart(3, '0')}`,
-        status: 'Gaida',
-        created_by_username: currentUser.full_name,
-        items: items,
-        created_at: new Date().toISOString().split('T')[0]
-    };
+    try {
+        const response = await fetch('api/orders.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                created_by: created_by,
+                items: items
+            })
+        });
 
-    // Add to demo orders
-    demoOrders.push(newOrder);
-
-    showNotification('Pasūtījums veiksmīgi izveidots!', 'success');
-    closeModal('add-order-modal');
-    
-    // Clear the order form
-    const orderItemsContainer = document.getElementById('order-items-container');
-    if (orderItemsContainer) {
-        orderItemsContainer.innerHTML = '';
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showNotification('Pasūtījums veiksmīgi izveidots!', 'success');
+            closeModal('add-order-modal');
+            
+            // Clear the order form
+            const orderItemsContainer = document.getElementById('order-items-container');
+            if (orderItemsContainer) {
+                orderItemsContainer.innerHTML = '';
+            }
+            
+            // Reload orders
+            loadOrders();
+        } else {
+            showNotification(data.message || 'Kļūda izveidojot pasūtījumu!', 'error');
+        }
+    } catch (error) {
+        console.error('Error creating order:', error);
+        showNotification('Kļūda izveidojot pasūtījumu!', 'error');
     }
-    
-    // Reload orders
-    loadOrders();
 }
 
 async function completeOrder(id) {
@@ -1025,13 +1064,8 @@ async function completeOrder(id) {
         const data = await response.json();
         if (data.status === 'success') {
             showNotification('Pasūtījums veiksmīgi pabeigts', 'success');
-            // Remove the order from the table
-            const orderRow = document.querySelector(`#orders-table tr[data-order-id="${id}"]`);
-            if (orderRow) {
-                orderRow.remove();
-            }
-            // Update stats
-            updateHomeStats();
+            // Reload orders to update the table
+            loadOrders();
         } else {
             showNotification(data.message || 'Kļūda pabeidzot pasūtījumu', 'error');
         }
@@ -1056,13 +1090,8 @@ async function cancelOrder(id) {
         const data = await response.json();
         if (data.status === 'success') {
             showNotification('Pasūtījums veiksmīgi atcelts', 'success');
-            // Remove the order from the table
-            const orderRow = document.querySelector(`#orders-table tr[data-order-id="${id}"]`);
-            if (orderRow) {
-                orderRow.remove();
-            }
-            // Update stats
-            updateHomeStats();
+            // Reload orders to update the table
+            loadOrders();
         } else {
             showNotification(data.message || 'Kļūda atceļot pasūtījumu', 'error');
         }
@@ -1100,14 +1129,27 @@ function renderUsersTable(users) {
             </div>
         ` : '<span class="text-muted">Nav atļauts</span>';
         
+        // Convert role to Latvian
+        let roleText = user.role || 'N/A';
+        if (roleText === 'admin') roleText = 'Administrators';
+        else if (roleText === 'worker') roleText = 'Darbinieks';
+        else if (roleText === 'organizer') roleText = 'Kārtotājs';
+        else if (roleText === 'user') roleText = 'Lietotājs';
+        
+        // Convert status to Latvian
+        let statusText = user.status || 'inactive';
+        if (statusText === 'active') statusText = 'Aktīvs';
+        else if (statusText === 'inactive') statusText = 'Neaktīvs';
+        else if (statusText === 'pending') statusText = 'Gaida';
+        
         tr.innerHTML = `
             <td>${user.username || 'N/A'}</td>
             <td>${user.full_name || 'N/A'}</td>
-            <td>${user.role || 'N/A'}</td>
+            <td>${roleText}</td>
             <td>${user.last_login ? new Date(user.last_login).toLocaleString() : 'N/A'}</td>
             <td>
                 <span class="badge ${user.status === 'active' ? 'bg-success' : 'bg-danger'}">
-                    ${user.status || 'inactive'}
+                    ${statusText}
                 </span>
             </td>
             <td>${actionButtons}</td>
@@ -1142,9 +1184,15 @@ function renderOrdersTable(orders) {
         }
         console.log(`Product list for order ${index + 1}:`, productList);
 
+        // Convert status to Latvian
+        let statusText = order.status || 'N/A';
+        if (statusText === 'pending') statusText = 'Gaida';
+        else if (statusText === 'completed') statusText = 'Pabeigts';
+        else if (statusText === 'cancelled') statusText = 'Atcelts';
+
         tr.innerHTML = `
             <td>${order.order_number || 'N/A'}</td>
-            <td>${order.status || 'N/A'}</td>
+            <td>${statusText}</td>
             <td>${order.created_by_username || 'N/A'}</td>
             <td>${productList}</td>
             <td>${new Date(order.created_at).toLocaleDateString()}</td>
@@ -1163,20 +1211,30 @@ function renderOrdersTable(orders) {
 // Dashboard Stats
 async function updateHomeStats() {
     try {
-        // Use demo data instead of API calls
+        // Get stats from API
+        const [usersResponse, productsResponse, ordersResponse] = await Promise.all([
+            fetch('api/users.php'),
+            fetch('api/products.php'),
+            fetch('api/orders.php')
+        ]);
+        
+        const usersData = await usersResponse.json();
+        const productsData = await productsResponse.json();
+        const ordersData = await ordersResponse.json();
+        
         const totalProductsElement = document.getElementById('total-products');
-        if (totalProductsElement) {
-            totalProductsElement.textContent = demoProducts.length;
+        if (totalProductsElement && productsData.success) {
+            totalProductsElement.textContent = productsData.products.length;
         }
 
         const totalOrdersElement = document.getElementById('total-orders');
-        if (totalOrdersElement) {
-            totalOrdersElement.textContent = demoOrders.length;
+        if (totalOrdersElement && ordersData.status === 'success') {
+            totalOrdersElement.textContent = ordersData.data.length;
         }
 
         const totalUsersElement = document.getElementById('total-users');
-        if (totalUsersElement) {
-            totalUsersElement.textContent = demoUsers.length;
+        if (totalUsersElement && usersData.success) {
+            totalUsersElement.textContent = usersData.users.length;
         }
     } catch (error) {
         console.error('Error updating home stats:', error);
@@ -1338,12 +1396,19 @@ async function addOrderItem() {
 
 async function getProductSelectOptions() {
     try {
-        // Use demo products data instead of API call
-        let options = '<option value="">Izvēlieties produktu</option>';
-        demoProducts.forEach(product => {
-            options += `<option value="${product.id}">${product.name} (${product.quantity})</option>`;
-        });
-        return options;
+        const response = await fetch('api/products.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            let options = '<option value="">Izvēlieties produktu</option>';
+            data.products.forEach(product => {
+                options += `<option value="${product.id}">${product.name} (${product.quantity})</option>`;
+            });
+            return options;
+        } else {
+            showNotification('Error fetching products for order item: ' + data.message, 'error');
+            return '';
+        }
     } catch (error) {
         console.error('Error fetching products for order item:', error);
         showNotification('Error fetching products for order item', 'error');
